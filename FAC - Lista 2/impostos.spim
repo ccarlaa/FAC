@@ -1,0 +1,61 @@
+        .data 
+
+um: .float 1.0
+cem: .float 100.0
+zero: .float 0.0
+bilhao: .float 1000000.0
+
+        .text 
+
+main: 
+
+lwc1 $f3, um
+lwc1 $f8, cem
+lwc1 $f9, zero
+lwc1 $f10, bilhao
+
+li $v0, 6 #valor
+syscall
+mov.s $f7, $f0
+
+li $v0, 6 #lucro
+syscall
+mov.s $f1, $f0
+
+li $v0, 6 #impostos
+syscall
+mov.s $f2, $f0
+
+c.lt.s $f7, $f9
+bc1t fim
+
+c.lt.s $f1, $f9
+bc1t fim
+
+c.lt.s $f2, $f9
+bc1t fim
+
+c.gt.s $f7, $f10
+bc1t fim
+
+c.gt.s $f1, $f8
+bc1t fim
+
+c.gt.s $f2, $f8
+bc1t fim
+
+#somando porcentagens
+
+add.s $f4, $f1, $f2
+div.s $f5, $f4, $f8
+add.s $f5, $f5, $f3
+
+mul.s $f6, $f5, $f7
+
+li          $v0, 2
+mov.s       $f12, $f6
+syscall
+
+fim:
+        li $v0, 10
+        syscall

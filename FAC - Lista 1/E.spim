@@ -1,0 +1,66 @@
+        .data 
+
+estrela: .asciiz "*"
+espaco: .asciiz " "
+quebra: .asciiz "\n"
+
+        .text 
+
+main: 
+
+#coletar primeiro numero 
+
+    li $v0, 5
+    syscall
+    move $t0, $v0
+
+#logica
+
+# int main()
+# {
+#     int i, j;
+#     for(j=0;j<=(input);j++){
+#         for(i=(input);i>=j;i--){
+#             printf(" ");
+#         }
+#         for(x=1;x<=(j*2+1);x++){
+#             printf("*");
+#         }
+#         printf("\n");
+#     }
+
+#     return 0;
+# }
+
+
+
+add $t1, $zero, $zero #variavel j
+add $t2, $zero, $zero # variavel x
+add $t6, $t0, $zero #variavel i
+li $t5, 2
+
+loopprincipal: beq $t1, $t6, fim
+               mul $t3, $t1, $t5
+               add $t3, $t3, 1
+primeiroloop: beq $t6, $t1 proximofor
+              li $v0, 4
+              la $a0, espaco
+              syscall
+              add $t6, $t6, -1
+              j primeiroloop
+proximofor: beq $t2, $t3 fimloopprincipal
+              li $v0, 4
+              la $a0, estrela
+              syscall
+              add $t2, $t2, 1
+              j proximofor
+fimloopprincipal: li $v0, 4
+                  la $a0, quebra
+                  syscall
+                  add $t1, $t1, 1
+                  add $t2, $zero, $zero
+                  add $t6, $t0, $zero
+                  j loopprincipal
+
+fim: li $v0, 10
+     syscall

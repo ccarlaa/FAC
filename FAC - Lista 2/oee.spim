@@ -1,0 +1,87 @@
+        .data 
+
+msg:    .asciiz    "overflow"
+
+        .text 
+
+main: 
+
+#coletar primeiro numero 
+
+    li $v0, 5
+    syscall
+    move $s3, $v0
+
+#coletar segundo numero 
+
+    li $v0, 5
+    syscall
+    move $s1, $v0
+
+#coletar segundo numero 
+
+    li $v0, 5
+    syscall
+    move $s2, $v0
+
+# calculo 
+
+    addu $t0, $s1, $s2
+
+    beq $s3, $zero, sem_sinal
+        j com_sinal
+
+com_sinal:
+
+    xor $t3, $s1, $s2 
+
+                                                      move $a0, $t3
+                  li $v0, 1   #Syscall para imprimir int
+                  syscall             
+
+    slt $t3, $t3, $zero   
+
+    bne $t3, $zero, sem_overflow    
+        xor $t3, $t0, $s1
+
+                                            move $a0, $s3
+                  li $v0, 1   #Syscall para imprimir int
+                  syscall  
+        slt $t3, $t3, $zero
+        bne $t3, $zero, overflow
+
+    sem_overflow: add $t6, $s1, $s2
+                  move $a0, $t6
+                  li $v0, 1   #Syscall para imprimir int
+                  syscall
+                  j exit 
+
+    overflow: li $v0, 4   #Syscall para imprimir string
+              la $a0, msg
+              syscall
+              j exit 
+
+sem_sinal: 
+
+        nor $t3, $s1, $zero
+
+        sltu $t3, $t3, $s2
+
+        bne $t3, $zero, overflows
+        j sem_overflows
+
+    sem_overflows: move $a0, $t0
+                  li $v0, 1
+                  syscall
+                  j exit
+
+    overflows: la $a0, msg
+              li $v0, 4
+              syscall
+              j exit
+
+#encerrar 
+
+    exit: li $v0, 10
+          syscall
+          

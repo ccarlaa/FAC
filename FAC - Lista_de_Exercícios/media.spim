@@ -1,0 +1,56 @@
+        .data 
+
+um: .float 0.0
+
+        .text 
+
+main: 
+
+lwc1 $f5, um
+
+li $v0, 5 #quantidade de interações em t0
+syscall
+move $t0, $v0
+
+add $t1, $zero, $zero #contador 
+
+
+slt $t2, $zero, $t0 #verdadeiro = 1
+
+beq $t2, 1, loop
+    j fim
+
+loop: 
+    beq $t1, $t0, resposta
+    li $v0, 6 #peso
+    syscall
+    mov.s $f1, $f0
+
+    c.le.s $f1, $f5
+    bc1t fim
+
+    li $v0, 6 #nota
+    syscall
+    mov.s $f2, $f0
+
+    c.le.s $f2, $f5
+    bc1t fim
+
+    mul.s $f3, $f1, $f2 #multiplica a nota pelo peso 
+    add.s $f4, $f4, $f3 #soma as multiplicações
+    add.s $f6, $f6, $f1 #soma os pesos
+    add $t1, $t1, 1
+    j loop
+
+resposta:
+
+    div.s $f7, $f4, $f6
+
+    li          $v0, 2
+    mov.s       $f12, $f7
+    syscall
+
+fim: 
+
+    li $v0, 10
+    syscall

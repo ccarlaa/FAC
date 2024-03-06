@@ -1,0 +1,16 @@
+        .data
+
+msg:    .asciiz    "Ola Mundo\n"
+
+        .text
+
+main:
+        #Syscall para imprimir string
+        li $v0, 4
+        la $a0, msg
+        syscall
+
+        #encerrar programa 
+
+        li $v0, 10
+        syscall

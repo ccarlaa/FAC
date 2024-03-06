@@ -1,0 +1,112 @@
+        .data 
+
+msg:    .asciiz    "overflow"
+
+        .text 
+
+main: 
+
+#coletar primeiro numero 
+
+    li $v0, 5
+    syscall
+    move $s1, $v0
+
+#coletar segundo numero 
+
+    li $v0, 5
+    syscall
+    move $s2, $v0
+
+#coletar terceiro numero 
+
+    li $v0, 5
+    syscall
+    move $s3, $v0
+
+# calculo 
+
+    addu $t0, $s1, $s2
+    addu $t1, $s2, $s3
+    addu $t2, $s3, $s1
+
+    slt $t7, $s1, $zero
+    beq $t7, $zero, negativoum
+        add $t4, $zero, 1
+        j continuaum
+    negativoum: add $t4, $zero, $zero
+
+    continuaum: slt $t7, $s2, $zero
+                beq $t7, $zero, negativodois
+                add $t5, $zero, 1
+                j continuadois
+    negativodois: add $t5, $zero, $zero
+
+    continuadois: slt $t7, $s3, $zero
+                  beq $t7, $zero, negativotres
+                  add $t6, $zero, 1
+                  j here
+    negativotres: add $t6, $zero, $zero
+
+    here: slt $t7, $t0, $zero
+    
+    beq $t7, $zero, negativoumm
+                      move $a0, $t7
+                  li $v0, 1   #Syscall para imprimir int
+                  syscall
+        add $t0, $zero, $zero
+        j continuaum
+    negativoumm: add $t0, $zero, $zero
+
+    continuaumm: slt $t7, $t1, $zero
+                beq $t7, $zero, negativodoiss
+                add $t1, $zero, 1
+                j continuadois
+    negativodoiss: add $t1, $zero, $zero
+
+    continuadoiss: slt $t7, $s2, $zero
+                  beq $t7, $zero, negativotress
+                  add $t2, $zero, 1
+                  j continua
+    negativotress: add $t2, $zero, $zero
+
+continua:
+
+spim -file Documentos/testedois.spim
+
+    xor $s4, $t4, $t5
+    xor $s5, $t5, $t6
+    xor $s6, $t6, $t4
+
+    bne $s4, $zero, segunda_verificacao
+        xor $t7, $t0, $t4
+        # slt $t7, $t7, $zero
+        bne $t7, $zero, overflow
+
+    segunda_verificacao:  bne $s5, $zero, terceira_verificacao
+                          xor $t7, $t1, $t5
+                        #   slt $t7, $t7, $zero
+                          bne $t7, $zero, overflow
+
+    terceira_verificacao: bne $s6, $zero, sem_overflow
+                          xor $t7, $t2, $t6
+                        #   slt $t7, $t7, $zero
+                          bne $t7, $zero, overflow
+
+    sem_overflow: add $t6, $s1, $s2
+                  add $t5, $t6, $s3
+                  move $a0, $t5
+                  li $v0, 1   #Syscall para imprimir int
+                  syscall
+                  j exit 
+
+    overflow: li $v0, 4   #Syscall para imprimir string
+              la $a0, msg
+              syscall
+              j exit 
+
+#encerrar 
+
+    exit: li $v0, 10
+          syscall
+          

@@ -1,0 +1,130 @@
+        .data 
+
+consts: .float      5.0, 9.0, 32.0, 273.15
+num: .float 273.15
+
+c: .byte 'c'
+f: .byte 'f'
+k: .byte 'k'
+
+ .text 
+
+main: 
+
+lb $t2, c
+lb $t3, f
+lb $t4, k
+
+li $v0, 12
+syscall
+lb $t0, ($v0)
+
+#coletar segunda letra 
+
+li $v0, 12
+syscall
+lb $t1, $v0
+    
+#calculo para F=>C
+
+li $v0, 6
+syscall
+
+la          $t5, consts
+lwc1        $f2, 0($t5)         # $f2 = 5.0
+lwc1        $f3, 4($t5)         # $f3 = 9.0
+lwc1        $f4, 8($t5)         # $f4 = 32.0
+lwc1        $f5, num       # 273.15
+
+bne $t0, $t3, conversao_dois
+bne $t1, $t2, conversao_dois
+
+    div.s       $f1, $f2, $f3       # $f1 = 5.0 / 9.0
+    sub.s       $f0, $f0, $f4       # $f0 = fahr - 32.0
+    mul.s       $f0, $f0, $f1
+
+    li $v0, 2
+    mov.s $f12, $f0
+    syscall
+
+    j fim 
+
+conversao_dois: #c=>f
+
+#     bne $t0, $t2, conversao_tres
+#     bne $t1, $t3, conversao_tres
+
+#     div.s       $f1, $f3, $f2       # $f1 = 9.0 / 5.0
+#     mul.s       $f0, $f0, $f1
+#     add.s       $f0, $f0, $f4       # $f0 = fahr - 32.0
+
+#     li $v0, 2
+#     mov.s $f12, $f0
+#     syscall
+
+#     j fim 
+
+# conversao_tres: #k=>c
+
+#     bne $t0, $t4, conversao_quatro
+#     bne $t1, $t2, conversao_quatro
+
+#     sub.s $f0, $f0, $f5
+
+#     li $v0, 2
+#     mov.s $f12, $f0
+#     syscall
+
+#     j fim 
+
+# conversao_quatro: #c=>k
+
+#     bne $t0, $t2, conversao_cinco
+#     bne $t1, $t4, conversao_cinco
+
+#     add.s $f0, $f0, $f5
+
+#     li $v0, 2
+#     mov.s $f12, $f0
+#     syscall
+
+#     j fim 
+
+# conversao_cinco: #f=>k
+
+#     bne $t0, $t3, conversao_seis
+#     bne $t1, $t4, conversao_seis
+
+#     div.s       $f1, $f2, $f3       # $f1 = 5.0 / 9.0
+#     sub.s       $f7, $f0, $f4
+#     mul.s       $f7, $f7, $f1
+#     add.s       $f0, $f7, $f5
+
+#     li $v0, 2
+#     mov.s $f12, $f0
+#     syscall
+
+#     j fim 
+
+# conversao_seis: #k=>f
+
+#     bne $t0, $t4, conversao_seis
+#     bne $t1, $t3, conversao_seis
+
+#     div.s       $f1, $f3, $f2       # $f1 = 9.0 / 5.0
+#     sub.s       $f0, $f7, $f5
+#     mul.s       $f7, $f0, $f1
+#     add.s       $f0, $f7, $f4
+
+#     li $v0, 2
+#     mov.s $f12, $f0
+#     syscall
+
+#     j fim 
+
+fim:
+
+    li $v0, 10
+    syscall
+
+
